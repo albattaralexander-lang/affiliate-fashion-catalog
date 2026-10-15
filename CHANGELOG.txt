@@ -1,0 +1,55 @@
+[2026-10-15 16:40] — Tahap 0 audit + Tahap 1-2 fondasi frontend (versi demo)
+Status: SELESAI (sebagian; lihat keterbatasan)
+Ringkasan:
+- Audit: hanya BLUEPRINT yang ada, tidak ada kode/README/CHANGELOG sebelumnya.
+- Dibuat frontend statis: halaman pilih brand, katalog BOYS.SEE_ (hitam-putih-abu) dan GIRLS.SEE_ (pink-putih), pencarian, filter kategori, kartu produk, state kosong/error/gambar gagal, pemberitahuan affiliate.
+- Data demo ditandai (DEMO), tanpa affiliate_url sehingga tidak ada tombol beli palsu. Produk draft difilter dari katalog.
+
+File dibuat:
+- index.html, boys/index.html, girls/index.html, css/style.css, js/catalog.js, data/products.js, README.md, .gitignore, BLUEPRINT.txt (salinan), CHANGELOG.txt
+
+File diubah:
+- BLUEPRINT.txt (bagian 12 STATUS PROYEK)
+
+Pemeriksaan:
+- node --check js/catalog.js dan data/products.js: LULUS (sintaks OK).
+- Hitung data: 3 produk published pria, 3 wanita, 1 draft pria difilter: LULUS.
+- Tampilan di browser, responsivitas, dan kontras: BELUM DIVERIFIKASI (tidak ada browser di lingkungan ini).
+
+Catatan keamanan/risiko:
+- Belum ada database, login admin, atau RLS (Tahap 3-4). Tidak ada rahasia di kode.
+
+Langkah berikutnya:
+- Tahap 3: skema Supabase + RLS + autentikasi admin (butuh akun Supabase milik pengguna).
+- Tahap 4: dashboard admin.
+
+[2026-10-15] — Tahap 3-4 (kode ditulis; BELUM terhubung ke Supabase nyata)
+Dikerjakan:
+- supabase/schema.sql: tabel products (constraint harga, brand, kode BS-/GS-, unik per brand), trigger updated_at, tabel admin_users, RLS (publik hanya baca produk terbit; tulis hanya admin).
+- js/config.js (kosong), js/catalog.js memuat dari Supabase bila dikonfigurasi, jika tidak memakai data demo.
+- admin/index.html + js/admin.js: login/logout (Supabase Auth), ringkasan, daftar+cari+filter, tambah/edit/hapus (konfirmasi), terbit/draft, kode otomatis, validasi, uji tautan, form tidak hilang saat gagal simpan.
+Diperiksa: node --check semua JS: LULUS.
+BELUM DIVERIFIKASI: login, RLS, CRUD ke Supabase asli, tampilan browser/mobile. Upload gambar (Storage) belum ada. Token login hanya di memori (muat ulang = login ulang).
+Berikutnya: kamu menjalankan langkah di README, lalu uji; Tahap 5-8 (audit keamanan, pemeriksaan, deployment).
+
+[2026-10-16] — Penyederhanaan katalog (gaya foto + nomor + nama)
+Dikerjakan:
+- Kartu produk: foto, "nomor. nama", seluruh kartu dapat diklik ke URL affiliate Shopee (tab baru, rel sponsored). Harga, kategori, deskripsi, tombol dihapus. Urutan: nomor terbesar dulu.
+- Hanya Shopee: pilihan TikTok Shop dihapus. Kategori dan filter kategori dihapus.
+- Nomor produk jadi angka tanpa awalan BS-/GS- (unik per brand, otomatis = nomor terbesar + 1).
+- Admin: form disederhanakan (brand, nomor, nama, URL affiliate, URL gambar, status).
+- Database: schema.sql diperbarui; supabase/migrasi-1.sql ditambahkan untuk tabel lama.
+File diubah: css/style.css, js/catalog.js, js/admin.js, admin/index.html, boys/index.html, girls/index.html, data/products.js, supabase/schema.sql, BLUEPRINT.txt, README.md
+File baru: supabase/migrasi-1.sql
+Diperiksa: node --check semua JS: LULUS. Uji render katalog dengan DOM tiruan (mode demo): LULUS (urutan 3,2,1; nomor+nama benar).
+BELUM DIVERIFIKASI: tampilan di browser/HP, migrasi SQL di Supabase nyata, admin ke Supabase nyata.
+Catatan: URL gambar masih lewat tautan (upload ke Supabase Storage belum ada).
+
+[2026-10-16] — Upload foto di admin
+Dikerjakan:
+- Form produk: input file foto (JPG/PNG/WebP), pratinjau, tombol Hapus foto. Foto dikecilkan di browser (maks 1200px, JPEG 85%) lalu diunggah ke Supabase Storage bucket publik product-images saat Simpan; URL publik otomatis diisi ke image_url.
+- Kolom URL gambar tetap ada sebagai alternatif. Foto lama di Storage dihapus saat diganti atau saat produk dihapus (best effort). Jika simpan produk gagal, foto yang sudah terunggah dipakai ulang saat coba lagi (tidak unggah dobel).
+File baru: supabase/storage.sql (bucket + kebijakan; wajib dijalankan sekali).
+File diubah: admin/index.html, js/admin.js, README.md, CHANGELOG.txt
+Diperiksa: node --check js/admin.js: LULUS.
+BELUM DIVERIFIKASI: upload ke Supabase asli, tampilan di browser/HP.

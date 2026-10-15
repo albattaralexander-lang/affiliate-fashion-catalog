@@ -1,0 +1,394 @@
+BLUEPRINT PROYEK — AFFILIATE FASHION CATALOG
+Brand: BOYS.SEE_ dan GIRLS.SEE_
+Versi dokumen: 1.0
+Tujuan: Menjadi dokumen konteks utama untuk AI Claude saat membangun dan melanjutkan proyek.
+
+============================================================
+1. INSTRUKSI UTAMA UNTUK AI CLAUDE
+============================================================
+
+Kamu bertindak sebagai software engineer senior, arsitek aplikasi, UI/UX designer, dan penulis dokumentasi untuk proyek ini.
+
+PENGGUNA MASIH PEMULA. Kerjakan secara bertahap, konsisten, aman, dan mudah dipelihara. Jangan meminta pengguna memahami detail teknis yang tidak diperlukan.
+
+ATURAN KERJA WAJIB:
+1. Baca seluruh file blueprint ini sebelum mulai mengerjakan.
+2. Periksa semua file proyek yang tersedia sebelum mengubah kode. Jangan menganggap file kosong atau struktur proyek tertentu sebelum memeriksanya.
+3. Kerjakan proyek secara bertahap dari fondasi sampai fitur lengkap. Jangan berhenti hanya setelah membuat rancangan atau contoh tampilan.
+4. Pengguna meminta pengerjaan berkelanjutan tanpa harus mengetes setiap langkah di Claude. Karena itu, selesaikan satu kelompok pekerjaan yang koheren, lakukan pemeriksaan otomatis yang memang tersedia di lingkungan kerja, perbaiki masalah yang ditemukan, lalu lanjutkan ke kelompok berikutnya. Jangan meminta pengguna mengetes di setiap langkah atau meminta persetujuan untuk detail implementasi biasa.
+5. Jangan mengklaim aplikasi sudah diuji, berjalan, aman, atau siap produksi jika pemeriksaan tersebut tidak benar-benar dilakukan. Jika Claude hanya dapat menghasilkan kode dalam percakapan dan tidak dapat mengakses file, menjalankan perintah, atau melakukan tes, jelaskan batasan itu di log dan berikan file lengkap beserta instruksi penerapannya.
+6. Jangan berhenti untuk bertanya tentang keputusan kecil. Pilih solusi yang paling sederhana, aman, masuk akal, dan konsisten dengan blueprint. Bertanya hanya jika ada informasi penting yang benar-benar tidak dapat ditentukan atau ada tindakan berisiko/merusak.
+7. Jangan menghapus atau menimpa pekerjaan yang sudah ada tanpa memeriksa dampaknya. Pertahankan fitur yang masih diperlukan. Sebelum perubahan besar, jelaskan dampak dan buat strategi pemulihan yang sesuai.
+8. Setelah setiap kelompok pekerjaan selesai, perbarui CHANGELOG.txt dan bagian STATUS PROYEK di dokumen ini. Catat tanggal, file yang dibuat/diubah, fitur yang selesai, pemeriksaan yang benar-benar dilakukan, hasilnya, keterbatasan, dan pekerjaan berikutnya.
+9. Jangan menulis log seolah-olah pekerjaan telah dilakukan jika belum dilakukan. Bedakan dengan jelas: direncanakan, dikerjakan, diperiksa, lulus, gagal, dan belum diverifikasi.
+10. Jika respons terpotong atau sesi berakhir, simpan progres yang sudah selesai dalam file proyek dan log. Pada sesi berikutnya, baca kembali blueprint, CHANGELOG.txt, dan file status sebelum melanjutkan. Lanjutkan dari pekerjaan terakhir yang belum selesai, jangan mengulang semuanya dari awal.
+11. Jangan hanya memberikan potongan kode yang tidak dapat dipasang. Jika bekerja melalui chat tanpa akses langsung ke file, berikan isi file secara lengkap untuk setiap file yang perlu dibuat/diubah, sebutkan path-nya, dan jangan menghilangkan bagian yang masih diperlukan.
+12. Gunakan bahasa Indonesia untuk dokumentasi dan penjelasan kepada pengguna. Nama variabel, fungsi, dan komentar kode boleh menggunakan bahasa yang sesuai standar proyek.
+13. Jangan menaruh rahasia, kata sandi, token API, atau service-role key di frontend, GitHub, atau log. Gunakan environment variables dan contoh file konfigurasi tanpa nilai rahasia.
+14. Jangan membuat fitur palsu. Jika sebuah fitur memerlukan backend, database, autentikasi, atau layanan eksternal yang belum dikonfigurasi, implementasikan batasannya secara jujur dan dokumentasikan apa yang diperlukan.
+15. Hindari menambahkan dependensi yang tidak perlu. Gunakan versi paket yang stabil dan dokumentasikan instalasi serta cara menjalankannya.
+16. Sebelum mengakhiri pekerjaan, berikan ringkasan singkat: yang selesai, pemeriksaan yang dilakukan, file penting, kendala, dan langkah lanjutan. Jangan menyebut pekerjaan “selesai sepenuhnya” jika kriteria penerimaan belum terpenuhi.
+
+============================================================
+2. VISI DAN TUJUAN PRODUK
+============================================================
+
+Bangun website katalog produk fashion untuk bisnis affiliate, bukan toko yang menyimpan stok atau memproses pembayaran sendiri.
+
+Brand:
+- BOYS.SEE_: katalog fashion pria.
+- GIRLS.SEE_: katalog fashion wanita.
+
+Model bisnis:
+- Awal: Shopee Affiliate.
+- Tahap lanjutan: dukungan tautan TikTok Shop Affiliate.
+- Website menampilkan produk dan meneruskan pengunjung ke tautan affiliate marketplace.
+- Website tidak boleh mengaku sebagai penjual resmi, pemilik stok, atau pihak yang mengelola transaksi marketplace jika hal tersebut tidak benar.
+- Jangan mengarang harga, stok, diskon, ulasan, atau data produk. Semua informasi produk harus berasal dari data yang dimasukkan pengelola dan diberi tanggal pembaruan bila relevan.
+- Tambahkan pemberitahuan affiliate yang jelas dan mudah ditemukan, misalnya: “Sebagian tautan produk merupakan tautan affiliate. Kami dapat menerima komisi jika kamu membeli melalui tautan tersebut, tanpa biaya tambahan bagi kamu.” Sesuaikan dengan ketentuan program affiliate yang digunakan.
+
+Alur pengunjung:
+Instagram BOYS.SEE_/GIRLS.SEE_ → Linktree → katalog brand → detail/kartu produk → tautan affiliate marketplace.
+
+Linktree direncanakan memiliki tiga tombol:
+1. BOYS.SEE_ — menuju katalog pria.
+2. GIRLS.SEE_ — menuju katalog wanita.
+3. Chat Admin — menuju kontak admin yang akan ditentukan pengguna.
+
+Target utama:
+- Pengunjung ponsel, terutama dari browser dalam aplikasi Instagram.
+- Tampilan ringan, cepat, responsif, jelas, dan mudah dipakai.
+- Tidak menjanjikan bahwa Instagram akan selalu membuka situs di browser internalnya; perilaku tersebut dikendalikan aplikasi dan perangkat.
+
+============================================================
+3. ARAH DESAIN
+============================================================
+
+BOYS.SEE_:
+- Nuansa hitam, putih, dan abu-abu.
+- Tampilan modern, rapi, minimalis, berfokus pada foto produk.
+- Tipografi mudah dibaca dan hierarki visual jelas.
+
+GIRLS.SEE_:
+- Nuansa merah muda dan putih, dengan warna teks yang tetap memiliki kontras baik.
+- Tampilan modern, rapi, elegan, dan berfokus pada foto produk.
+
+Keduanya:
+- Mobile-first dan responsif pada ponsel, tablet, serta desktop.
+- Kartu produk konsisten, foto memiliki rasio yang seragam, harga mudah ditemukan.
+- Area tombol cukup besar untuk disentuh.
+- Ada indikator loading, kondisi kosong, dan pesan kesalahan yang ramah.
+- Jangan menggunakan animasi berlebihan.
+- Pastikan kontras, label, alt text gambar, navigasi keyboard, dan aksesibilitas dasar.
+- Hindari autoplay audio/video.
+- Jangan meniru logo atau tampilan marketplace dengan cara yang dapat membingungkan pengguna.
+
+============================================================
+4. FITUR WEBSITE PUBLIK
+============================================================
+
+A. Halaman awal / pilihan brand
+- Menjelaskan bahwa website adalah katalog fashion affiliate.
+- Menyediakan akses ke katalog pria dan wanita.
+- Tidak wajib menjadi halaman utama jika Linktree langsung diarahkan ke halaman katalog masing-masing.
+
+B. Katalog BOYS.SEE_
+- Menampilkan produk pria yang aktif/published.
+- Kategori awal dapat meliputi pakaian, sepatu, tas, dan aksesori.
+- Pencarian produk.
+- Filter kategori dan pengurutan sederhana bila relevan.
+- Kartu produk menampilkan foto, nama singkat, nomor produk, harga yang tercatat, dan tombol untuk melihat produk.
+- Produk yang tidak aktif tidak muncul di katalog publik.
+
+C. Katalog GIRLS.SEE_
+- Menampilkan produk wanita yang aktif/published.
+- Kategori awal dapat meliputi pakaian, sepatu, tas, hijab/pasmina, dan aksesori.
+- Fitur pencarian, filter, serta kartu produk mengikuti pola katalog pria.
+
+D. Detail produk atau tujuan tautan
+- Informasi produk ditampilkan dari data yang dimasukkan admin.
+- Tombol “Lihat di Shopee” atau label marketplace yang sesuai mengarah ke URL affiliate yang tersimpan.
+- Pada tahap selanjutnya, produk dapat memakai Shopee atau TikTok Shop. Jangan mengasumsikan semua URL merupakan tautan valid; lakukan validasi format dan sediakan cara admin mengujinya.
+- Buka tautan eksternal secara aman. Jika menggunakan target tab baru, gunakan rel yang sesuai seperti noopener/noreferrer.
+- Jangan menyamarkan tujuan tautan atau mengarahkan pengguna ke situs yang tidak berkaitan.
+- Jika URL tidak tersedia atau tidak valid, jangan tampilkan tombol beli yang rusak.
+
+E. Keadaan halaman
+- Loading, kosong, error jaringan, produk tidak ditemukan, dan gambar gagal dimuat harus memiliki tampilan yang baik.
+- Jika backend tidak tersedia, tampilkan pesan yang jelas; jangan berpura-pura data berhasil tersimpan.
+
+============================================================
+5. FITUR DASHBOARD ADMIN
+============================================================
+
+Dashboard hanya untuk pengelola yang memiliki akun dan izin yang sesuai.
+
+Fitur minimum:
+1. Login dan logout.
+2. Ringkasan jumlah produk aktif dan draft.
+3. Daftar produk dengan pencarian/filter.
+4. Tambah produk.
+5. Edit produk.
+6. Hapus produk dengan konfirmasi.
+7. Simpan sebagai draft atau terbitkan.
+8. Aktif/nonaktifkan produk.
+9. Unggah atau masukkan URL gambar produk sesuai dukungan backend.
+10. Kelola nomor produk, nama, harga, kategori, brand, marketplace, URL affiliate, dan deskripsi singkat.
+11. Validasi form dan pesan sukses/gagal.
+12. Konfirmasi sebelum tindakan destruktif.
+13. Status loading saat penyimpanan.
+14. Menangani kegagalan penyimpanan tanpa menghilangkan data form yang sudah diisi.
+15. Keluar dari dashboard dengan aman.
+
+Nomor produk:
+- BOYS.SEE_: BS-001, BS-002, BS-003, dan seterusnya.
+- GIRLS.SEE_: GS-001, GS-002, GS-003, dan seterusnya.
+- Nomor harus unik. Hindari bentrok dan jangan memakai nomor yang sama pada dua produk aktif dalam brand yang sama.
+- Jika nomor otomatis dibuat, periksa bentrok di sisi backend/database, bukan hanya frontend.
+
+Hak akses:
+- Untuk versi pertama, satu jenis akun admin/pemilik sudah cukup.
+- Jangan menyediakan pendaftaran admin publik secara terbuka.
+- Semua operasi tulis harus diperiksa di backend/database, bukan hanya dengan menyembunyikan halaman admin di frontend.
+- Jangan pernah menanam kata sandi admin tetap atau rahasia di kode frontend.
+- Terapkan kebijakan akses database (misalnya RLS jika memakai Supabase) agar pengunjung anonim hanya dapat membaca produk yang sudah diterbitkan dan tidak dapat menambah, mengubah, atau menghapus produk.
+- Akun admin harus melalui autentikasi dan aturan akses yang benar.
+- Jangan menyimpan password dalam plaintext atau membuat sistem autentikasi buatan sendiri jika layanan autentikasi yang aman tersedia.
+
+============================================================
+6. MODEL DATA PRODUK
+============================================================
+
+Rancangan field produk minimal:
+- id: ID unik dari database.
+- product_code: nomor produk, contoh BS-001 atau GS-001.
+- brand: boys atau girls.
+- name: nama produk.
+- slug: identitas URL yang ramah dibaca bila diperlukan.
+- category: kategori produk.
+- price: harga dalam rupiah sebagai angka integer, bukan teks berformat.
+- currency: IDR.
+- image_url atau image_path: lokasi gambar.
+- description: deskripsi singkat opsional.
+- marketplace: shopee atau tiktok_shop.
+- affiliate_url: tautan affiliate lengkap.
+- status: draft atau published.
+- created_at: waktu pembuatan.
+- updated_at: waktu pembaruan.
+
+Ketentuan:
+- Validasi harga sebagai angka positif atau nol sesuai aturan bisnis.
+- Validasi brand dan marketplace dengan daftar nilai yang diizinkan.
+- Validasi URL dan protokol yang diperbolehkan.
+- Jangan menyimpan informasi pribadi pembeli karena website tidak memproses transaksi.
+- Jika menambahkan beberapa gambar per produk di masa depan, rancang migrasi data dengan hati-hati.
+- Harga di katalog adalah data yang dimasukkan admin dan dapat berubah di marketplace. Beri label atau catatan bahwa harga akhir mengikuti halaman marketplace.
+- Jangan mengklaim sinkronisasi otomatis harga/stok kecuali benar-benar ada API resmi dan integrasi yang sah.
+
+============================================================
+7. ARSITEKTUR TEKNIS YANG DISARANKAN
+============================================================
+
+Pilih arsitektur yang sederhana, aman, dan sesuai kebutuhan. Sebelum mengimplementasikan, periksa keadaan repositori dan jelaskan pilihan akhir dalam dokumentasi.
+
+Pilihan awal yang disarankan:
+- Frontend: HTML, CSS, JavaScript modular, kecuali proyek yang sudah ada menggunakan framework yang masuk akal.
+- Backend/data/auth: Supabase (PostgreSQL, Auth, dan Storage jika dibutuhkan) dapat digunakan agar proyek awal tidak perlu memelihara server Node.js sendiri.
+- Hosting frontend: layanan static hosting yang mendukung HTTPS dan konfigurasi proyek.
+- Domain khusus dapat dipasang setelah website siap.
+
+Jangan menambahkan Node.js backend hanya demi terlihat lengkap jika Supabase sudah cukup untuk kebutuhan awal. Jika kondisi proyek atau kebutuhan fitur membuat backend Node.js lebih sesuai, jelaskan alasannya dan jaga struktur tetap sederhana.
+
+Aturan rahasia dan konfigurasi:
+- File .env tidak boleh di-commit.
+- Sediakan .env.example tanpa rahasia nyata jika memang diperlukan.
+- Kunci publik/anon yang memang dirancang untuk frontend boleh digunakan sesuai dokumentasi layanan, tetapi harus dilindungi oleh kebijakan akses database yang tepat.
+- Service-role key, password, token privat, dan rahasia server tidak boleh masuk ke browser.
+- Jangan menaruh kredensial dalam README, screenshot, changelog, atau log.
+- Gunakan HTTPS untuk deployment.
+- Dokumentasikan setup proyek, variabel lingkungan, skema database, kebijakan akses, dan proses deployment.
+- Jangan menjalankan migrasi destruktif tanpa menjelaskan dampak dan menyiapkan langkah pemulihan.
+
+============================================================
+8. STRUKTUR FILE DAN DOKUMENTASI
+============================================================
+
+Sesuaikan struktur dengan teknologi dan file proyek yang benar-benar ada. Ini contoh struktur logis, bukan perintah untuk menghapus struktur lama:
+
+/
+  index.html atau halaman utama frontend
+  boys/ atau route katalog pria
+  girls/ atau route katalog wanita
+  admin/ atau route dashboard
+  css/ atau direktori styles
+  js/ atau direktori scripts
+  assets/
+  database/ atau migrations/ bila diperlukan
+  README.md
+  BLUEPRINT.txt
+  CHANGELOG.txt
+  .env.example bila diperlukan
+  .gitignore
+
+Dokumentasi wajib:
+- BLUEPRINT.txt: visi, aturan kerja, arsitektur, fitur, dan status terbaru.
+- CHANGELOG.txt: log perubahan kronologis.
+- README.md: cara instalasi, konfigurasi, menjalankan, menguji, dan deploy.
+- Database schema/migrations: definisi tabel dan kebijakan akses bila digunakan.
+- .gitignore: mencegah file rahasia, dependensi, cache, dan file hasil build yang tidak perlu ikut commit.
+
+Jangan membuat file duplikat dengan isi yang bertentangan. Jika nama atau struktur berbeda dari contoh, catat keputusan itu di README atau blueprint.
+
+============================================================
+9. TAHAPAN PENGERJAAN
+============================================================
+
+Lakukan secara berurutan. Setelah tiap tahap selesai dan diperiksa, lanjutkan otomatis ke tahap berikutnya tanpa meminta pengguna menguji setiap tahap.
+
+TAHAP 0 — AUDIT PROYEK
+- Baca blueprint, changelog, README, dan seluruh struktur file yang relevan.
+- Identifikasi teknologi, file, fitur yang sudah ada, error yang terlihat, dan risiko.
+- Jangan menghapus kode sebelum memahami fungsinya.
+- Catat kondisi awal dan rencana kerja.
+
+TAHAP 1 — FONDASI FRONTEND
+- Siapkan struktur halaman, desain responsif, navigasi, token warna, komponen kartu produk, dan keadaan loading/kosong/error.
+- Buat katalog BOYS.SEE_ dan GIRLS.SEE_ dengan desain masing-masing.
+- Gunakan data contoh yang jelas ditandai sebagai contoh/demo, bukan produk nyata yang diklaim tersedia.
+- Pastikan data contoh tidak memiliki tautan affiliate palsu yang berpotensi menyesatkan.
+
+TAHAP 2 — KATALOG DAN PENCARIAN
+- Implementasikan daftar produk, pencarian, filter kategori, harga, gambar, dan tombol tautan marketplace.
+- Pisahkan data dari tampilan agar mudah dikelola.
+- Tambahkan validasi URL dan fallback jika gambar/produk gagal dimuat.
+
+TAHAP 3 — DATABASE DAN AUTENTIKASI
+- Siapkan skema database, autentikasi admin, kebijakan akses, dan storage gambar jika diperlukan.
+- Dokumentasikan semua langkah konfigurasi eksternal yang memerlukan akun atau kredensial pengguna.
+- Jangan berpura-pura backend aktif sebelum pengguna mengisi konfigurasi yang dibutuhkan.
+- Jangan meminta pengguna menempelkan rahasia ke chat.
+
+TAHAP 4 — DASHBOARD ADMIN
+- Login/logout.
+- Daftar produk.
+- Tambah, edit, hapus, draft, publish, dan aktif/nonaktif.
+- Upload/pemilihan gambar.
+- Validasi dan penanganan error.
+- Hubungkan seluruh operasi dengan database secara nyata.
+- Jangan menggunakan localStorage sebagai pengganti permanen database untuk sistem multi-perangkat atau autentikasi admin.
+
+TAHAP 5 — KEAMANAN DAN KETAHANAN
+- Audit aturan akses data dan operasi tulis.
+- Periksa validasi input, sanitasi output, tautan eksternal, unggahan gambar, dan error handling.
+- Pastikan data draft tidak tampil kepada pengunjung umum.
+- Pastikan akun anonim tidak bisa mengelola produk.
+- Periksa tidak ada rahasia yang ter-commit.
+- Dokumentasikan keterbatasan dan risiko yang belum dapat diselesaikan.
+
+TAHAP 6 — PEMERIKSAAN
+- Jalankan pemeriksaan yang tersedia di lingkungan kerja: syntax/lint/build jika ada, pemeriksaan file dan konfigurasi, serta tes unit/integrasi jika tersedia.
+- Buat tes untuk alur utama jika lingkungan mendukung.
+- Periksa responsivitas pada beberapa lebar viewport bila alat tersedia.
+- Periksa console/build error jika dapat dijalankan.
+- Perbaiki temuan sebelum lanjut.
+- Jika tidak ada lingkungan eksekusi browser, jangan mengklaim telah memverifikasi tampilan di browser.
+- Catat pemeriksaan yang tidak bisa dilakukan dan alasan spesifiknya.
+
+TAHAP 7 — DOKUMENTASI DAN DEPLOYMENT
+- Lengkapi README, konfigurasi, skema database, dan petunjuk deployment.
+- Siapkan panduan menghubungkan domain dan Linktree.
+- Pastikan semua URL dan environment variable yang dibutuhkan didokumentasikan tanpa nilai rahasia.
+- Berikan daftar langkah manual yang memang membutuhkan tindakan pengguna, seperti membuat akun layanan, memasukkan variabel rahasia di dashboard hosting, atau mengatur domain.
+- Jangan menyatakan website live sebelum deployment benar-benar dilakukan dan diverifikasi.
+
+TAHAP 8 — AUDIT AKHIR
+- Bandingkan hasil dengan kriteria penerimaan.
+- Periksa semua fitur dan keamanan yang dapat diperiksa.
+- Perbarui STATUS PROYEK dan CHANGELOG.txt.
+- Berikan ringkasan final dan daftar hal yang masih memerlukan konfigurasi manual atau belum terverifikasi.
+
+============================================================
+10. KRITERIA PENERIMAAN
+============================================================
+
+Proyek dapat dinyatakan selesai untuk versi pertama jika:
+1. Katalog pria dan wanita memiliki tampilan berbeda sesuai brand.
+2. Halaman responsif dan nyaman digunakan di ponsel.
+3. Pencarian dan kategori berfungsi berdasarkan data produk.
+4. Produk menampilkan nomor, nama, harga, dan gambar sesuai data.
+5. Tombol marketplace mengarah ke affiliate URL yang tersimpan dan valid.
+6. Admin dapat login melalui autentikasi yang benar.
+7. Admin dapat menambah, mengubah, menerbitkan, menonaktifkan, dan menghapus produk.
+8. Data yang dikelola admin tersimpan di database dan dapat dibaca kembali.
+9. Pengunjung anonim tidak dapat mengubah data atau melihat produk draft.
+10. Input divalidasi dan error ditangani dengan jelas.
+11. Tidak ada rahasia server di frontend atau repository.
+12. README menjelaskan setup, konfigurasi, pemeriksaan, dan deployment.
+13. CHANGELOG.txt dan status proyek akurat.
+14. Pemeriksaan yang tersedia sudah dijalankan dan hasilnya dicatat.
+15. Semua bagian yang belum bisa diverifikasi disebutkan secara eksplisit.
+
+Jangan menyatakan semua kriteria terpenuhi jika masih ada yang belum diverifikasi. Gunakan status: LULUS, GAGAL, SEBAGIAN, atau BELUM DIVERIFIKASI.
+
+============================================================
+11. FORMAT CHANGELOG.TXT
+============================================================
+
+Gunakan format kronologis berikut untuk setiap pekerjaan:
+
+[YYYY-MM-DD HH:MM] — Judul perubahan
+Status: DIRENCANAKAN / DIKERJAKAN / SELESAI / GAGAL / BELUM DIVERIFIKASI
+Ringkasan:
+- Apa yang diubah dan mengapa.
+
+File dibuat:
+- path/file atau “Tidak ada”.
+
+File diubah:
+- path/file atau “Tidak ada”.
+
+Pemeriksaan:
+- Perintah atau pemeriksaan yang benar-benar dijalankan.
+- Hasil aktualnya.
+- Jika tidak ada pemeriksaan yang bisa dilakukan, tulis alasannya.
+
+Catatan keamanan/risiko:
+- Risiko, migrasi, konfigurasi, atau keterbatasan yang relevan.
+
+Langkah berikutnya:
+- Pekerjaan berikut yang konkret.
+
+Jangan menghapus entri lama. Tambahkan entri baru di bagian atas agar perubahan terbaru mudah ditemukan, atau gunakan urutan kronologis yang konsisten. Jangan mencatat rahasia.
+
+============================================================
+12b. PEMBARUAN KEPUTUSAN DESAIN (2026-10-16) — MENGGANTIKAN BAGIAN LAIN YANG BERTENTANGAN
+============================================================
+- Kartu produk hanya berisi: foto, nomor, nama (contoh "579. Squish Nice Cube"). Seluruh kartu adalah tautan ke URL affiliate. Tanpa harga, deskripsi, kategori, atau tombol terpisah.
+- Hanya Shopee Affiliate. Dukungan TikTok Shop dan kolom marketplace DIHAPUS.
+- Kategori dan filter kategori DIHAPUS.
+- Nomor produk berupa angka biasa (tanpa awalan BS-/GS-), unik per brand, tampil dari nomor terbesar (terbaru) ke terkecil.
+- Kolom database yang dihapus: product_code, category, price, currency, description, marketplace. Kolom baru: number (integer). Skema lama -> jalankan supabase/migrasi-1.sql.
+
+============================================================
+12. STATUS PROYEK SAAT DOKUMEN DIBUAT
+============================================================
+
+Status: TAHAP 1-2 SELESAI SEBAGIAN (versi demo, 2026-10-15)
+Tahap terakhir selesai: Tahap 0-2; Tahap 3-4 KODE ditulis tapi belum diuji dengan Supabase nyata (lihat CHANGELOG)
+Tahap yang sedang dikerjakan: verifikasi Tahap 3-4 (butuh akun Supabase pengguna, langkah di README)
+File yang sudah diperiksa: Blueprint (lingkungan hanya berisi file ini)
+Pemeriksaan yang telah dijalankan: node --check (LULUS); tampilan browser BELUM DIVERIFIKASI
+Kendala yang diketahui: Lingkungan Claude yang digunakan pengguna adalah website/aplikasi percakapan; belum dipastikan apakah Claude memiliki akses langsung ke folder proyek atau hanya dapat memberikan kode melalui chat.
+Langkah berikutnya:
+1. Baca blueprint ini secara keseluruhan.
+2. Periksa file proyek yang diberikan/tersedia di percakapan.
+3. Jika tidak ada akses langsung ke folder, jelaskan bahwa perubahan harus disalin ke editor dan keluarkan file lengkap yang diperlukan, bukan mengaku telah mengubah file lokal.
+4. Mulai Tahap 0, lalu lanjutkan bertahap sesuai aturan kerja.
+
+============================================================
+13. PESAN PEMBUKA UNTUK SESI CLAUDE
+============================================================
+
+Baca seluruh BLUEPRINT.txt ini sebelum mengerjakan. Ikuti semua aturan kerja dan tahapan yang tertulis. Audit file proyek yang benar-benar tersedia, lalu kerjakan proyek secara berkelanjutan sampai kriteria penerimaan tercapai sejauh lingkungan dan konfigurasi yang tersedia memungkinkan. Jangan meminta saya mengetes setiap tahap atau meminta persetujuan untuk keputusan teknis biasa. Lakukan pemeriksaan otomatis yang benar-benar tersedia, perbaiki hasil yang gagal, dan catat hasil faktualnya. Setelah setiap kelompok pekerjaan, perbarui CHANGELOG.txt dan status proyek. Jangan mengarang hasil tes atau mengklaim mengubah file lokal jika kamu tidak memiliki akses ke file tersebut. Jika ada tindakan manual yang benar-benar memerlukan saya, kumpulkan dalam daftar yang ringkas dan jelas; jangan meminta rahasia melalui chat. Pertahankan pekerjaan yang ada dan jangan menghapus file tanpa memahami dampaknya. Mulai dengan Tahap 0 — Audit Proyek, kemudian lanjutkan otomatis ke tahap berikutnya.
+
+AKHIR BLUEPRINT

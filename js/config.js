@@ -1,0 +1,2 @@
+// Anon key memang publik (aman di frontend). JANGAN pernah memasukkan service_role key di sini.
+window.APP_CONFIG = { supabaseUrl: "https://plcczpycrfekwdzfmqsw.supabase.co", supabaseAnonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsY2N6cHljcmZla3dkemZtcXN3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwNzg2NTYsImV4cCI6MjEwNzY1NDY1Nn0.PH23qekgqtOsO67Y0TdNuvoHGScIPw3kHteMf7Xt8-8" };

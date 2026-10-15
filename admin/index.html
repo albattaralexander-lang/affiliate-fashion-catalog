@@ -1,0 +1,25 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow"><title>Admin | BOYS.SEE_ & GIRLS.SEE_</title><link rel="stylesheet" href="../css/style.css">
+<style>.box{border:1px solid var(--line);border-radius:12px;padding:12px;margin:12px 0}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+label{display:block;font-size:.85rem;margin:8px 0 2px}.f input,.f select,.f textarea{width:100%}textarea{min-height:70px;padding:8px;border:1px solid var(--line);border-radius:8px;font:inherit}
+.item{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid var(--line)}.bad{color:#b00020}.ok{color:#0a7a2f}
+.btn.sec{background:#fff;color:var(--fg)}.btn.danger{background:#b00020;border-color:#b00020}.tag{font-size:.75rem;padding:2px 8px;border-radius:99px;border:1px solid var(--line)}[hidden]{display:none!important}</style></head>
+<body class="boys"><header><h1>Dashboard Admin</h1><p id="top" class="msg" role="status"></p></header>
+<main>
+<section id="login" class="box f" hidden><label for="em">Email</label><input id="em" type="email" autocomplete="username"><label for="pw">Kata sandi</label><input id="pw" type="password" autocomplete="current-password"><p></p><button id="go" class="btn" type="button">Masuk</button></section>
+<section id="app" hidden>
+<div class="row"><span id="sum" class="note"></span><button id="out" class="btn sec" type="button">Keluar</button><button id="new" class="btn" type="button">Tambah produk</button></div>
+<div class="tools"><input id="q" type="search" placeholder="Cari nama/nomor" aria-label="Cari"><select id="fb" aria-label="Brand"><option value="">Semua brand</option><option value="boys">BOYS.SEE_</option><option value="girls">GIRLS.SEE_</option></select><select id="fs" aria-label="Status"><option value="">Semua status</option><option value="published">Terbit</option><option value="draft">Draft</option></select></div>
+<div id="list"></div>
+<section id="form" class="box f" hidden><h2 id="ft" style="margin:0">Produk</h2>
+<label for="brand">Brand</label><select id="brand"><option value="boys">BOYS.SEE_</option><option value="girls">GIRLS.SEE_</option></select>
+<label for="code">Nomor produk (otomatis jika kosong)</label><input id="code" type="number" min="1" step="1" inputmode="numeric" placeholder="579">
+<label for="name">Nama</label><input id="name" maxlength="200">
+<label for="aff">URL affiliate Shopee (https://...)</label><input id="aff" type="url">
+<label for="file">Foto produk (JPG/PNG/WebP, otomatis dikecilkan)</label><input id="file" type="file" accept="image/jpeg,image/png,image/webp">
+<div id="pvw" class="row" hidden><img id="prev" alt="Pratinjau foto" width="120" height="120" style="object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#eee"><button id="rmph" class="btn sec" type="button">Hapus foto</button></div>
+<label for="img">atau URL gambar (https://...)</label><input id="img" type="url">
+<label for="st">Status</label><select id="st"><option value="draft">Draft</option><option value="published">Terbit</option></select>
+<p id="fm" class="msg" role="status"></p><div class="row"><button id="save" class="btn" type="button">Simpan</button><button id="cancel" class="btn sec" type="button">Batal</button><a id="test" class="btn sec" target="_blank" rel="noopener noreferrer" hidden>Uji tautan</a></div></section>
+</section></main>
+<script src="../js/config.js"></script><script src="../js/admin.js"></script></body></html>
