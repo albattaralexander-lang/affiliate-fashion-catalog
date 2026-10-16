@@ -37,7 +37,7 @@
       if(r.status===401)expired();
       return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok){var e=new Error((d&&d.message)||"Permintaan gagal");e.status=r.status;e.code=d&&d.code;throw e}return d})})
       .catch(function(x){if(x&&x.message==="expired")expired();throw x})}
-  function show(a){$("login").hidden=a;$("app").hidden=!a}
+  function show(a){if(!a&&$("form").open)closeForm();$("login").hidden=a;$("app").hidden=!a}
   $("go").onclick=function(){
     if(busy)return;busy=true;say($("top"),"Masuk...");
     fetch(base+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:key,"Content-Type":"application/json"},body:JSON.stringify({email:$("em").value.trim(),password:$("pw").value})})
@@ -65,13 +65,16 @@
       r.appendChild(i);r.appendChild(a);L.appendChild(r)})}
   ["q","fb","fs"].forEach(function(i){$(i).addEventListener("input",render)});
   function nextNumber(brand){var m=0;items.forEach(function(p){if(p.brand===brand&&p.number>m)m=p.number});return m+1}
-  function open(p,src){editing=p;$("form").hidden=false;$("ft").textContent=p?"Edit nomor "+p.number:src?"Duplikat dari nomor "+src.number:"Tambah produk";
+  function open(p,src){editing=p;var fm=$("form");if(!fm.open){if(fm.showModal)fm.showModal();else fm.setAttribute("open","")}$("ft").textContent=p?"Edit nomor "+p.number:src?"Duplikat dari nomor "+src.number:"Tambah produk";
     say($("fm"),src?"Nomor otomatis. Ubah seperlunya lalu klik Simpan.":"");
     var v=p||(src?{brand:src.brand,number:"",name:src.name,affiliate_url:src.affiliate_url,image_url:src.image_url,status:"draft"}:{brand:"boys",number:"",name:"",affiliate_url:"",image_url:"",status:"draft"});
     $("brand").value=v.brand;$("code").value=v.number;$("name").value=v.name;
-    $("aff").value=v.affiliate_url;$("img").value=v.image_url;dropPending();$("file").value="";preview(v.image_url);upd();$("form").scrollIntoView()}
+    $("aff").value=v.affiliate_url;$("img").value=v.image_url;dropPending();$("file").value="";preview(v.image_url);upd();fm.scrollTop=0}
+  function closeForm(){var fm=$("form");if(fm.close)fm.close();else fm.removeAttribute("open")}
   function upd(){var u=$("aff").value.trim();$("test").hidden=!ok(u);if(ok(u))$("test").href=u}
-  $("aff").addEventListener("input",upd);$("new").onclick=function(){open(null)};$("cancel").onclick=function(){dropPending();$("form").hidden=true};
+  $("aff").addEventListener("input",upd);$("new").onclick=function(){open(null)};$("cancel").onclick=$("x").onclick=function(){if(!busy)closeForm()};
+  $("form").addEventListener("cancel",function(e){if(busy)e.preventDefault()});
+  $("form").addEventListener("close",function(){dropPending()});
   // ---- Foto produk (Supabase Storage, bucket publik "product-images") ----
   function preview(u){if(pvUrl){URL.revokeObjectURL(pvUrl);pvUrl=null}
     if(u&&u.indexOf("blob:")===0)pvUrl=u;
@@ -125,7 +128,7 @@
       .then(function(d){if(!d||!d.length)throw new Error("Tidak ada perubahan tersimpan (cek izin admin).");
         pending=null;uploaded=null;$("file").value="";
         if(oldUrl&&oldUrl!==v.image_url&&!inUse(oldUrl,eid))removeFile(oldUrl);
-        $("form").hidden=true;say($("top"),!eid&&v.status==="draft"?"Disimpan sebagai Nonaktif karena URL affiliate masih kosong. Isi URL lalu aktifkan.":"Berhasil disimpan.",!eid&&v.status==="draft"?"":"ok");return refresh()})
+        closeForm();say($("top"),!eid&&v.status==="draft"?"Disimpan sebagai Nonaktif karena URL affiliate masih kosong. Isi URL lalu aktifkan.":"Berhasil disimpan.",!eid&&v.status==="draft"?"":"ok");return refresh()})
       .catch(function(x){say($("fm"),x.code==="23505"?"Nomor produk sudah dipakai. Ganti nomornya.":"Gagal menyimpan: "+x.message+". Data form tetap aman, coba lagi.","bad")})
       .then(function(){busy=false;$("save").disabled=false})};
   function toggle(p,sw){var s=p.status==="published"?"draft":"published";
