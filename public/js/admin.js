@@ -1,24 +1,43 @@
 (function(){
   var cfg=window.APP_CONFIG||{}, $=function(i){return document.getElementById(i)};
-  var base=(cfg.supabaseUrl||"").replace(/\/$/,""), key=cfg.supabaseAnonKey||"", token=null, items=[], editing=null, busy=false, pending=null, uploaded=null, pvUrl=null,
+  var base=(cfg.supabaseUrl||"").replace(/\/$/,""), key=cfg.supabaseAnonKey||"", token=null, rt=null, exp=0, renewing=null, SK="admin_session", items=[], editing=null, busy=false, pending=null, uploaded=null, pvUrl=null,
       BUCKET="product-images", pub=base+"/storage/v1/object/public/product-images/";
     function ok(u){try{var x=new URL(u);return x.protocol==="https:"||x.protocol==="http:"}catch(e){return false}}
   function say(el,t,c){el.textContent=t;el.className="msg "+(c||"")}
   if(!base||!key){say($("top"),"Konfigurasi Supabase belum diisi (js/config.js). Lihat README.");return}
   $("login").hidden=false;
-  function api(path,opt){opt=opt||{};var h={apikey:key,Authorization:"Bearer "+(token||key),"Content-Type":"application/json"};
-    if(opt.prefer)h.Prefer=opt.prefer;
-    return fetch(base+path,{method:opt.method||"GET",headers:h,body:opt.body?JSON.stringify(opt.body):undefined}).then(function(r){
-      if(r.status===401){token=null;show(false);say($("top"),"Sesi berakhir. Silakan masuk lagi.","bad")}
-      return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok){var e=new Error((d&&d.message)||"Permintaan gagal");e.status=r.status;e.code=d&&d.code;throw e}return d})})}
+  // ---- Sesi tersimpan: login sekali, token diperbarui otomatis ----
+  function saveSess(d){token=d.access_token;rt=d.refresh_token;exp=Date.now()+(d.expires_in||3600)*1000;
+    try{localStorage.setItem(SK,JSON.stringify({a:token,r:rt,e:exp}))}catch(e){}}
+  function clearSess(){token=null;rt=null;exp=0;try{localStorage.removeItem(SK)}catch(e){}}
+  function expired(){clearSess();items=[];show(false);say($("top"),"Sesi berakhir. Silakan masuk lagi.","bad")}
+  function renew(){if(!rt)return Promise.reject(new Error("expired"));if(renewing)return renewing;
+    renewing=fetch(base+"/auth/v1/token?grant_type=refresh_token",{method:"POST",headers:{apikey:key,"Content-Type":"application/json"},body:JSON.stringify({refresh_token:rt})})
+      .then(function(r){return r.json().then(function(d){
+        if(r.ok&&d.access_token){saveSess(d);return}
+        if(r.status>=400&&r.status<500){clearSess();throw new Error("expired")}
+        throw new Error("Server sedang bermasalah, coba lagi.")},function(){throw new Error("Server sedang bermasalah, coba lagi.")})},
+        function(){throw new Error("Tidak ada koneksi internet.")})
+      .then(function(v){renewing=null;return v},function(x){renewing=null;throw x});
+    return renewing}
+  function fresh(){return token&&Date.now()>exp-60000?renew():Promise.resolve()}
+  function api(path,opt){opt=opt||{};
+    return fresh().then(function(){
+      var h={apikey:key,Authorization:"Bearer "+(token||key),"Content-Type":"application/json"};
+      if(opt.prefer)h.Prefer=opt.prefer;
+      return fetch(base+path,{method:opt.method||"GET",headers:h,body:opt.body?JSON.stringify(opt.body):undefined})}).then(function(r){
+      if(r.status===401&&token&&!opt.retried){opt.retried=true;return renew().then(function(){return api(path,opt)})}
+      if(r.status===401)expired();
+      return r.text().then(function(t){var d=t?JSON.parse(t):null;if(!r.ok){var e=new Error((d&&d.message)||"Permintaan gagal");e.status=r.status;e.code=d&&d.code;throw e}return d})})
+      .catch(function(x){if(x&&x.message==="expired")expired();throw x})}
   function show(a){$("login").hidden=a;$("app").hidden=!a}
   $("go").onclick=function(){
     if(busy)return;busy=true;say($("top"),"Masuk...");
     fetch(base+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:key,"Content-Type":"application/json"},body:JSON.stringify({email:$("em").value.trim(),password:$("pw").value})})
       .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error("Email atau kata sandi salah.");return d})})
-      .then(function(d){token=d.access_token;$("pw").value="";show(true);say($("top"),"");return refresh()})
+      .then(function(d){saveSess(d);$("pw").value="";show(true);say($("top"),"");return refresh()})
       .catch(function(e){say($("top"),e.message,"bad")}).then(function(){busy=false})};
-  $("out").onclick=function(){var t=token;token=null;items=[];show(false);say($("top"),"Kamu sudah keluar.","ok");
+  $("out").onclick=function(){var t=token;clearSess();items=[];show(false);say($("top"),"Kamu sudah keluar.","ok");
     if(t)fetch(base+"/auth/v1/logout",{method:"POST",headers:{apikey:key,Authorization:"Bearer "+t}}).catch(function(){})};
   function refresh(){return api("/rest/v1/products?select=*&order=brand.asc,number.desc").then(function(d){items=d;render();
     if(!d.length)say($("top"),"Daftar kosong. Jika kamu belum terdaftar sebagai admin, data tidak akan tampil (lihat README).")})
@@ -57,8 +76,8 @@
     im.onerror=function(){URL.revokeObjectURL(u);rej(new Error("Foto tidak bisa dibaca."))};im.src=u})}
   function upload(b,brand){
     var path=brand+"/"+Date.now()+"-"+Math.random().toString(36).slice(2,8)+".jpg";
-    return fetch(base+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:key,Authorization:"Bearer "+token,"Content-Type":"image/jpeg","Cache-Control":"max-age=31536000"},body:b})
-      .then(function(r){if(r.status===401){token=null;show(false);say($("top"),"Sesi berakhir. Silakan masuk lagi.","bad")}
+    return fresh().then(function(){return fetch(base+"/storage/v1/object/"+BUCKET+"/"+path,{method:"POST",headers:{apikey:key,Authorization:"Bearer "+token,"Content-Type":"image/jpeg","Cache-Control":"max-age=31536000"},body:b})})
+      .then(function(r){if(r.status===401)expired();
         return r.json().catch(function(){return{}}).then(function(d){
           if(!r.ok)throw new Error(r.status===401?"sesi berakhir":(d&&d.message)||"upload gagal (cek bucket & izin admin, lihat README)");
           uploaded={blob:b,url:pub+path};return uploaded.url})})}
@@ -103,4 +122,8 @@
   function del(p){if(!confirm("Hapus nomor "+p.number+" ("+p.name+") secara permanen?"))return;
     api("/rest/v1/products?id=eq."+p.id,{method:"DELETE",prefer:"return=representation"}).then(function(d){
       if(!d||!d.length)throw new Error("izin ditolak");removeFile(p.image_url);say($("top"),"Produk dihapus.","ok");return refresh()}).catch(function(x){say($("top"),"Gagal menghapus: "+x.message,"bad")})}
+  try{var s0=JSON.parse(localStorage.getItem(SK)||"null");if(s0&&s0.r){token=s0.a;rt=s0.r;exp=s0.e||0}}catch(e){}
+  if(rt){$("login").hidden=true;say($("top"),"Memuat sesi...");
+    fresh().then(function(){show(true);say($("top"),"");return refresh()})
+      .catch(function(x){if(x&&x.message==="expired"){expired();return}show(false);say($("top"),(x&&x.message)||"Gagal memuat.","bad")})}
 })();
